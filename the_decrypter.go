@@ -10,7 +10,7 @@ import (
 
 func main() {
 	var allfiles []string = ListAll("C:\\") //for windows as example
-	key := []byte("'5;x~Eq=TjPAX-0KB`9(b<opvS:2O/4M")
+	key := []byte("'5;x~Eq=TjPAX-0KB`9(b<opvS:2O/4M")  //modify this to the key you have
 	for i := 0; i < len(allfiles); i++ {
 		ciphertext, err := os.ReadFile(allfiles[i])
 		if err != nil {
