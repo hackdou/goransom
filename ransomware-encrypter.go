@@ -65,7 +65,7 @@ func ListAll(path string) (paths []string) {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() {
-			var flag bool
+			var flag bool = true
 			_, err := os.ReadFile(fullpath)
 			if err != nil {
 				flag = false
