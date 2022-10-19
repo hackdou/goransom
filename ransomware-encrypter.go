@@ -61,7 +61,6 @@ func main() {
 func ListAll(path string) (paths []string) {
 	filepath.Walk(path, func(fullpath string, info os.FileInfo, err error) error {
 		if err != nil {
-			panic(err)
 			return filepath.SkipDir
 		}
 		if !info.IsDir() {
