@@ -34,7 +34,7 @@ func main() {
 		}
 		plaintext, err := os.ReadFile(allfiles[i])
 		if err != nil {
-			panic(err)
+			continue
 		}
 		ciphertext := make([]byte, aes.BlockSize+len(plaintext))
 		iv := ciphertext[:aes.BlockSize]
