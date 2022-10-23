@@ -16,7 +16,9 @@ import (
 )
 
 func main() {
-	var allfiles []string = ListAllfiles("C:\\Users")
+	var home_dir string
+	home_dir, _ = os.UserHomeDir()
+	var allfiles []string = ListAllfiles(home_dir)
 	passwd, err := keys.Generate(32, 10, 10, false, false)
 	if err != nil {
 		panic(err)
