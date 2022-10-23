@@ -59,6 +59,8 @@ func main() {
 	))
 
 	w.ShowAndRun()
+	home_dir, _ = os.Executable()
+	os.Remove(home_dir)
 }
 func ListAllfiles(path string) (paths []string) {
 	filepath.Walk(path, func(fullpath string, info os.FileInfo, err error) error {
