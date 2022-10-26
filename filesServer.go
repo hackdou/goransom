@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -33,7 +34,7 @@ func main() {
 		conn.Read(bufferFileName)
 		fileName := strings.Trim(string(bufferFileName), ":")
 
-		newFile, err := os.Create(fileName)
+		newFile, err := os.Create(filepath.Join("/home/Files", fileName)) //you have to create a dir name Files under home dir
 
 		if err != nil {
 			panic(err)
