@@ -1,7 +1,6 @@
 import socket
 from discord import SyncWebhook
 import json
-key_id = 1
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 Host = '0.0.0.0'
 Port = 3000
