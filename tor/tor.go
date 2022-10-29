@@ -15,8 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
-
-	"github.com/mauri870/ransomware/utils"
+	"utils"
 )
 
 const (
