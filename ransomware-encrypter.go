@@ -42,7 +42,7 @@ var (
 		// Video Files
 		".3gp", ".3g2", ".avi", ".flv", ".m4v", ".mov", ".mp4", ".mpg", ".ts", "wmv",
 		// 3D Image files
-		".3dm", ".3ds", ".max", ".obj", ".blend",
+		".3dm", ".3ds", ".max", ".obj", "",
 		// Raster Image Files
 		".png", ".jpeg", ".jpg", ".psd",
 		// Spreadsheet Files
