@@ -13,7 +13,7 @@ import (
 const BUFFERSIZE = 1024
 
 func main() {
-	connection, err := net.Listen("tcp", "0.0.0.0:3000")
+	connection, err := net.Listen("tcp", "127.0.0.1:3000")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,6 +38,7 @@ func main() {
 
 		if err != nil {
 			panic(err)
+			continue
 		}
 		defer newFile.Close()
 		var receivedBytes int64
