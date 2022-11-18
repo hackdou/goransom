@@ -20,7 +20,7 @@ import (
 
 const (
 	// IsReadyMessage indicates that tor is ready for connections
-	IsReadyMessage = "Bootstrapped 100%: Done"
+	IsReadyMessage = "Bootstrapped 100% (done): Done"
 	TOR_ZIP_URL    = "https://dist.torproject.org/torbrowser/11.5.6/tor-win32-0.4.7.10.zip"
 )
 
