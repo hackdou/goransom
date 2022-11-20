@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"proxy"
+	"golang.org/x/net/proxy"
 	"strings"
 )
 
